@@ -1,0 +1,115 @@
+#! /usr/bin/env ruby
+
+require 'optparse'
+require 'superstudio'
+
+class SuperStudio
+    def initialize(input, options)
+        @modeler = Superplus
+        @input = input
+        @options = options
+    end
+
+    def create
+        @model = @modeler.create_standard_model(@input[:building_type], @input[:climate_zone], @input[:standard], @input[:build_path] , @options[:debug])
+    end
+
+    def save
+        @modeler.persist(@model, @input[:build_path])
+    end
+
+    def add_weather
+        if @input[:epw]
+            puts
+            puts '☀️ ⛅ ⛈️ adding energyplus weather file ☀️ ⛅ ⛈️'
+            @model = @modeler.add_epw(@model, @input[:epw])
+        end
+
+        if @input[:ddy]
+            puts
+            puts '❄️ 🌨️ ☀️ adding design day file ❄️ 🌨️ ☀️'
+            @model = @modeler.add_ddy(@model, @input[:ddy])
+        end
+    end
+
+    def swap_geometry
+        puts @input[:json]
+        @model = @modeler.merge_geometry(@input[:json], @model)
+    end
+
+    def scale_geometry
+
+    end
+end
+
+path = {}
+options = {}
+
+o = OptionParser.new do |option|
+    option.banner = '🏢💡 SuperStudio 🔌🏢 \n Usage: superstudio init -t [building_type] -z [climate_zone] -s [standard] -p [build_path]'
+
+    # Path Options
+    option.on('-t [ARG]', '--building_type [ARG]', 'Enter the primary building occupancy type') do |building_type|
+        path[:building_type] = building_type
+    end
+
+    option.on('-z [ARG]', '--climate_zone [ARG]', 'Enter the climate zone the building is located in') do |cz|
+        path[:climate_zone] = cz
+    end
+
+    option.on('-s [ARG]', '--standard [ARG]', 'Enter the ASHRAE standard to make assumptions against') do |standard|
+        path[:standard] = standard
+    end
+
+    option.on('-p [ARG]', '--build_path [ARG]', 'Enter the path to save the model to') do |build_path|
+        path[:build_path] = build_path
+    end
+
+    option.on('--epw [ARG]', 'Path to an optional weather file') do |weather|
+        path[:epw] = weather
+    end
+
+    option.on('--ddy [ARG]', 'Path to an optional DDY file') do |weather|
+        path[:ddy] = weather
+    end
+
+    option.on('--json [ARG]', 'Path to optional geometry JSON file') do |geo|
+        path[:json] = geo
+    end
+
+    options[:geometry] = false
+    option.on('--geometry', 'Add optional geometry data') do
+        options[:geometry] = true
+    end
+
+    options[:debug] = false
+    option.on('-d', '--debug', 'Print additional debug info') do 
+        options[:debug] = true
+    end
+
+    options[:weather] = false
+    option.on('-w', '--weather', 'Add optional weather files') do 
+        options[:weather] = true
+    end
+end.parse!
+
+puts
+puts '🏢💡 SuperStudio 🔌🏢'
+puts
+
+modeler = SuperStudio.new(path, options)
+
+puts '🥾 Bootsrapping Model 🥾'
+modeler.create
+puts
+puts '💯 Got it, model creation finished! 💯'
+puts 
+if options[:weather]
+    modeler.add_weather
+end
+
+if options[:geometry]
+    modeler.swap_geometry
+end
+
+modeler.save
