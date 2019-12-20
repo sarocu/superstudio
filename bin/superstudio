@@ -77,6 +77,20 @@ o = OptionParser.new do |option|
         path[:json] = geo
     end
 
+    option.on('--model [ARG]', 'Path to existing OSM') do |osm|
+        path[:osm] = osm
+    end
+
+    options[:create] = false
+    option.on('--create', 'Create a New Energy Model') do
+        options[:create] = true
+    end
+
+    options[:update] = false
+    option.on('--update', 'Run commands against an existing model') do
+        options[:update] = true
+    end
+
     options[:geometry] = false
     option.on('--geometry', 'Add optional geometry data') do
         options[:geometry] = true
@@ -99,11 +113,14 @@ puts
 
 modeler = SuperStudio.new(path, options)
 
-puts '🥾 Bootsrapping Model 🥾'
-modeler.create
-puts
-puts '💯 Got it, model creation finished! 💯'
-puts 
+if options[:create]
+    puts '🥾 Bootsrapping Model 🥾'
+    modeler.create
+    puts
+    puts '💯 Got it, model creation finished! 💯'
+    puts 
+end
+
 if options[:weather]
     modeler.add_weather
 end

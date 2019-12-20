@@ -1,0 +1,7 @@
+{
+   "created_at" : "20191220T025741Z",
+   "seed_file" : "../denver-model.osm",
+   "steps" : [],
+   "updated_at" : "20191220T025846Z",
+   "weather_file" : "USA_CO_Denver.Intl.AP.725650_TMY3.epw"
+}

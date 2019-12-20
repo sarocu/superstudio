@@ -33,7 +33,7 @@ module Superplus
     end
 
     def self.add_epw(model, weather_path)
-        p = OpenStudio::Path.new(weather_path)
+        p = File.expand_path(weather_path)
         epw = OpenStudio::EpwFile.new(p)
         OpenStudio::Model::WeatherFile.setWeatherFile(model, epw).get
 

@@ -1,0 +1,21 @@
+GIT
+  remote: git://github.com/sarocu/superstudio.git
+  revision: 78fe8edfc3102ddab8df274bb4661ee6f43d9f58
+  branch: master
+  specs:
+    superstudio (0.1.0)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    openstudio-standards (0.2.10)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  openstudio-standards
+  superstudio!
+
+BUNDLED WITH
+   1.15.3
