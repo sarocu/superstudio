@@ -1,1 +1,1 @@
-../bin/superstudio --debug --update --model ./denver-model.osm --geometry --zoning per-space 
+../bin/superstudio --debug --update --model ./denver-model.osm --geometry --zoning per-space --wwr 0.3

@@ -50,6 +50,12 @@ class SuperStudio
         @model = @modeler.assign_zone_per_space(@model)
     end
 
+    def apply_wwr
+        puts 
+        puts '🏗️ Applying a Window-Wall Ratio 🏗️'
+        @model = @modeler.apply_wwr(@model, @input[:wwr].to_f)
+    end
+
     def scale_geometry
 
     end
@@ -92,6 +98,10 @@ o = OptionParser.new do |option|
 
     option.on('--zoning [ARG]', 'Zoning strategy to implement (e.g. one zone per space') do |zone|
         path[:zone] = zone
+    end
+
+    option.on('--wwr [ARG]', 'Window to wall ratio (as decimal)') do |wwr|
+        path[:wwr] = wwr
     end
 
     option.on('--model [ARG]', 'Path to existing OSM') do |osm|
@@ -155,6 +165,10 @@ if options[:geometry]
 
     if path[:zone]
         modeler.apply_zoning
+    end
+
+    if path[:wwr]
+        modeler.apply_wwr
     end
 end
 

@@ -105,4 +105,21 @@ module Superplus
     def self.get_space_list(model)
         return model.getSpaces
     end
+
+    def self.get_surface_list(model)
+        return model.getSurfaces
+    end
+
+    def self.apply_wwr(model, wwr)
+        surface_list = get_surface_list(model)
+        surface_list.each do |surface|
+            # skip non-exterior walls
+            next if surface.surfaceType != 'Wall'
+            next if surface.outsideBoundaryCondition != 'Outdoors'
+
+            surface.setWindowToWallRatio(wwr)
+        end
+
+        return model
+    end
 end
