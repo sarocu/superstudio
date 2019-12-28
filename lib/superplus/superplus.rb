@@ -122,4 +122,20 @@ module Superplus
 
         return model
     end
+
+    def self.get_gross_area(model)
+        building = model.building()
+        return building.get.floorArea()
+    end
+
+    def self.scale_floor_area(model, floor_area)
+        existing_area = get_gross_area(model)
+        puts 'Existing gross floor area: ' + existing_area.to_s
+        scalar = (floor_area / existing_area) ** 0.5
+
+        puts '......'
+        new_model = BTAP::Geometry.scale_model(model, scalar, scalar, 1)
+        puts 'New gross floor area: ' + get_gross_area(new_model).to_s
+        return new_model
+    end
 end

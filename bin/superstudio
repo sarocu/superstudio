@@ -57,7 +57,9 @@ class SuperStudio
     end
 
     def scale_geometry
-
+        puts 
+        puts '🧱 Scaling the floor area of the building 🏗🧱'
+        @model = @modeler.scale_floor_area(@model, @input[:floor_area].to_f)
     end
 end
 
@@ -102,6 +104,10 @@ o = OptionParser.new do |option|
 
     option.on('--wwr [ARG]', 'Window to wall ratio (as decimal)') do |wwr|
         path[:wwr] = wwr
+    end
+
+    option.on('--floor_area [ARG]', 'Gross floor area to scale the building to') do |area|
+        path[:floor_area] = area
     end
 
     option.on('--model [ARG]', 'Path to existing OSM') do |osm|
@@ -169,6 +175,10 @@ if options[:geometry]
 
     if path[:wwr]
         modeler.apply_wwr
+    end
+
+    if path[:floor_area]
+        modeler.scale_geometry
     end
 end
 

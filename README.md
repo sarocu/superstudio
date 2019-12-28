@@ -10,9 +10,10 @@
 | Merge geometry from JSON | `--geometry [--json ...]` | Swap out standard geometry with JSON formatted from FloorspaceJS |
 | Create thermal zones | `--geometry --zoning per-space` | Create thermal zones according to a given scheme; currently only one zone per space is supported |
 | Set WWR | `--geometry --wwr 0.3` | Set the window-wall ratio of all exterior walls |
+| Scale floor area | `--geometry --floor_area 2000` | Scales the X and Y axis of the existing geometry to match the provided floor area in square meters |
 
 This project is still in its early stages and not exactly production ready - I will be fixing bugs and applying a number of new features including:
-* Geometry scaling
+* ~~Geometry scaling~~
 * ~~Apply window-to-wall ratios~~
 * HVAC system templates
 * Space type assignment for FloorspaceJS files
