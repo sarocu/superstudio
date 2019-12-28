@@ -14,8 +14,16 @@ class SuperStudio
         @model = @modeler.create_standard_model(@input[:building_type], @input[:climate_zone], @input[:standard], @input[:build_path] , @options[:debug])
     end
 
+    def load
+        @model = @modeler.load_model(@input[:osm]).get
+    end
+
     def save
-        @modeler.persist(@model, @input[:build_path])
+        if @input[:build_path]
+            @modeler.persist(@model, @input[:build_path])
+        else
+            @modeler.persist(@model, @input[:osm])
+        end
     end
 
     def add_weather
@@ -33,8 +41,13 @@ class SuperStudio
     end
 
     def swap_geometry
-        puts @input[:json]
         @model = @modeler.merge_geometry(@input[:json], @model)
+    end
+
+    def apply_zoning
+        puts 
+        puts 'Applying Zoning Strategy: One Zone per Space'
+        @model = @modeler.assign_zone_per_space(@model)
     end
 
     def scale_geometry
@@ -75,6 +88,10 @@ o = OptionParser.new do |option|
 
     option.on('--json [ARG]', 'Path to optional geometry JSON file') do |geo|
         path[:json] = geo
+    end
+
+    option.on('--zoning [ARG]', 'Zoning strategy to implement (e.g. one zone per space') do |zone|
+        path[:zone] = zone
     end
 
     option.on('--model [ARG]', 'Path to existing OSM') do |osm|
@@ -119,6 +136,12 @@ if options[:create]
     puts
     puts '💯 Got it, model creation finished! 💯'
     puts 
+elsif options[:update]
+    puts '💽 Loading Model 💽'
+    modeler.load
+    puts '💯 Got it, model loaded 💯'
+else
+    puts 'Please choose to create a new model or load an existing OSM'
 end
 
 if options[:weather]
@@ -126,7 +149,14 @@ if options[:weather]
 end
 
 if options[:geometry]
-    modeler.swap_geometry
+    if path[:json]
+        modeler.swap_geometry
+    end
+
+    if path[:zone]
+        modeler.apply_zoning
+    end
 end
 
+# if the user is updating an existing model and hasn't specified a build_path, save back to the original model
 modeler.save

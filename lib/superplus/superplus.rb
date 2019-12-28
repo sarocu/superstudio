@@ -10,6 +10,18 @@ module Superplus
         return modeler.get_model
     end
 
+    def self.load_model(model_path)
+        p = File.expand_path(model_path)
+        begin
+            return OpenStudio::Model::Model.load(p)
+        rescue => exception
+            puts '💣  error!! 💣'
+            puts 'could not load OSM file'
+            puts exception
+            
+        end
+    end
+
     def self.merge_geometry(json_file, model)
         puts
         puts '📂 reading JSON geometry...'
@@ -75,5 +87,22 @@ module Superplus
             success = false
         end
         return model
+    end
+
+    def self.assign_zone_per_space(model)
+        puts 'Getting all of the 🏢 spaces 🏢 in your model...'
+        space_list = get_space_list(model)
+        puts 'Assigning a 🔥 thermal zone ❄️ to each space...'
+        space_list.each do |space|
+            zone = OpenStudio::Model::ThermalZone.new(model)
+            space.setThermalZone(zone)
+            zone.setName(space.name.get)
+        end
+
+        return model
+    end
+
+    def self.get_space_list(model)
+        return model.getSpaces
     end
 end

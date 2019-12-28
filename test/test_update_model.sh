@@ -1,0 +1,1 @@
+../bin/superstudio --debug --update --model ./denver-model.osm --geometry --zoning per-space 
