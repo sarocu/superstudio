@@ -8,6 +8,7 @@
 | Set the Climate Zone | `--climate_zone [...]` | Adds construction sets and loads|
 | Add weather data | `--weather [-epw ...] [-ddy ...]` | Asign EPW and DDY files |
 | Merge geometry from JSON | `--geometry [--json ...]` | Swap out standard geometry with JSON formatted from FloorspaceJS |
+| Create thermal zones | `--geometry --zoning per-space` | Create thermal zones according to a given scheme; currently only one zone per space is supported |
 
 This project is still in its early stages and not exactly production ready - I will be fixing bugs and applying a number of new features including:
 * Geometry scaling
