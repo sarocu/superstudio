@@ -61,6 +61,12 @@ class SuperStudio
         puts '🧱 Scaling the floor area of the building 🏗🧱'
         @model = @modeler.scale_floor_area(@model, @input[:floor_area].to_f)
     end
+
+    def apply_template
+        puts
+        puts 'Applying 🌡️ HVAC🌡️ template...'
+        @model = @modeler.apply_template(@model, @input[:template])
+    end
 end
 
 path = {}
@@ -102,6 +108,10 @@ o = OptionParser.new do |option|
         path[:zone] = zone
     end
 
+    option.on('--template [ARG]', 'Basic system template to apply to the model') do |template|
+        path[:template] = template
+    end
+
     option.on('--wwr [ARG]', 'Window to wall ratio (as decimal)') do |wwr|
         path[:wwr] = wwr
     end
@@ -138,6 +148,11 @@ o = OptionParser.new do |option|
     option.on('-w', '--weather', 'Add optional weather files') do 
         options[:weather] = true
     end
+
+    options[:systems] = false
+    option.on('--systems', 'Apply a basic HVAC template or SWH template') do 
+        options[:systems] = true
+    end
 end.parse!
 
 puts
@@ -173,13 +188,17 @@ if options[:geometry]
         modeler.apply_zoning
     end
 
-    if path[:wwr]
-        modeler.apply_wwr
-    end
-
     if path[:floor_area]
         modeler.scale_geometry
     end
+
+    if path[:wwr]
+        modeler.apply_wwr
+    end
+end
+
+if options[:systems]
+    modeler.apply_template
 end
 
 # if the user is updating an existing model and hasn't specified a build_path, save back to the original model

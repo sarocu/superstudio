@@ -1,4 +1,5 @@
 require_relative 'standard'
+require_relative '../templates/centralSystemHwChwVav'
 require 'openstudio'
 require 'json'
 
@@ -137,5 +138,13 @@ module Superplus
         new_model = BTAP::Geometry.scale_model(model, scalar, scalar, 1)
         puts 'New gross floor area: ' + get_gross_area(new_model).to_s
         return new_model
+    end
+
+    def self.apply_template(model, template)
+        case template
+        when 'centralSystemHwChwVav'
+            system = CentralSystemHwChwVav.new(model)
+            return system.bootstrap
+        end
     end
 end
