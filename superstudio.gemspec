@@ -9,7 +9,9 @@ Gem::Specification.new do |s|
     s.files = [
         'lib/superplus/standard.rb',
         'lib/superplus/superplus.rb',
-        'lib/templates/centralSystemHwChwVav.rb',
+        'lib/templates/basics.rb',
+        'lib/templates/templates.rb',
+        'lib/templates/basics.rb',
         'lib/superstudio.rb'
     ]
     s.homepage = 'https://www.sarocu.com/'

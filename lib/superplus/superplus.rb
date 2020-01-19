@@ -1,5 +1,6 @@
 require_relative 'standard'
-require_relative '../templates/centralSystemHwChwVav'
+require_relative '../templates/templates'
+require_relative '../templates/basics'
 require 'openstudio'
 require 'json'
 
@@ -141,10 +142,14 @@ module Superplus
     end
 
     def self.apply_template(model, template)
-        case template
-        when 'centralSystemHwChwVav'
-            system = CentralSystemHwChwVav.new(model)
-            return system.bootstrap
+        mytemplates = Templates.new
+        begin
+            updated_model = mytemplates.__send__(template, model)
+            return updated_model
+        rescue => exception
+            puts 'Exception occurred executing template: '
+            puts exception
+            return model
         end
     end
 end

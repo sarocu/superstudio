@@ -1,4 +1,4 @@
-class CentralSystemHwChwVav
+class Basics
     def initialize(model)
         @model = model
     end
@@ -64,13 +64,7 @@ class CentralSystemHwChwVav
         sizing_object = OpenStudio::Model::SizingSystem.new(@model, air_loop)
     end
 
-    def bootstrap
-        # Create all systems, link up the zones, and return the model
-        # ...
-        basic_hot_water
-        basic_condenser_water
-        basic_chilled_water
-        air_system
+    def get_model
         return @model
     end
 end

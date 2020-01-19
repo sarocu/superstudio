@@ -158,7 +158,7 @@ end.parse!
 puts
 puts '🏢💡 SuperStudio 🔌🏢'
 puts
-
+Dir.glob('../templates/*.rb').each{|f| require f}
 modeler = SuperStudio.new(path, options)
 
 if options[:create]
