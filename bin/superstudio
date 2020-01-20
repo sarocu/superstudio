@@ -1,6 +1,7 @@
 #! /usr/bin/env ruby
 
 require 'optparse'
+require 'json'
 require 'superstudio'
 
 class SuperStudio
@@ -169,7 +170,13 @@ if options[:version]
     exit
 end
 
-Dir.glob('../templates/*.rb').each{|f| require f}
+# Eventually this should be part of a setup process:
+settings_path = File.join(File.dirname(__FILE__), 'superstudio-settings.json')
+settings = JSON.parse(File.read(settings_path))
+Dir.chdir(File.expand_path(settings['templates_dir'])) do 
+    Dir.glob('./*.rb').each{|f| require f}
+end
+
 modeler = SuperStudio.new(path, options)
 
 if options[:create]

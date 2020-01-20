@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
         'lib/templates/basics.rb',
         'lib/templates/templates.rb',
         'lib/templates/basics.rb',
+        'lib/templates/helpers.rb',
         'lib/superstudio.rb'
     ]
     s.homepage = 'https://www.sarocu.com/'

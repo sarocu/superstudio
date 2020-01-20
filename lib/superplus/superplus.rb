@@ -118,7 +118,7 @@ module Superplus
             # skip non-exterior walls
             next if surface.surfaceType != 'Wall'
             next if surface.outsideBoundaryCondition != 'Outdoors'
-
+            
             surface.setWindowToWallRatio(wwr)
         end
 
