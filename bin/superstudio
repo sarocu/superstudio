@@ -153,11 +153,22 @@ o = OptionParser.new do |option|
     option.on('--systems', 'Apply a basic HVAC template or SWH template') do 
         options[:systems] = true
     end
+
+    options[:version] = false
+    option.on('--version', 'SuperStudio CLI Version Number') do 
+        options[:version] = true
+    end
 end.parse!
 
 puts
 puts '🏢💡 SuperStudio 🔌🏢'
 puts
+
+if options[:version]
+    puts 'SuperStudio v0.1.0'
+    exit
+end
+
 Dir.glob('../templates/*.rb').each{|f| require f}
 modeler = SuperStudio.new(path, options)
 
@@ -168,7 +179,7 @@ if options[:create]
     puts '💯 Got it, model creation finished! 💯'
     puts 
 elsif options[:update]
-    puts '💽 Loading Model 💽'
+    puts '💽  Loading Model 💽'
     modeler.load
     puts '💯 Got it, model loaded 💯'
 else
