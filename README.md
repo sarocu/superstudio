@@ -15,7 +15,8 @@
 This project is still in its early stages and not exactly production ready - I will be fixing bugs and applying a number of new features including:
 * ~~Geometry scaling~~
 * ~~Apply window-to-wall ratios~~
-* HVAC system templates
+* ~~Plugin template system~~
+* Stock HVAC system templates
 * Space type assignment for FloorspaceJS files
 * Basic simulation run manager
 * Results extraction
@@ -27,7 +28,7 @@ Dependencies:
 * [OpenStudio-Standards 0.2.10 or higher](https://rubygems.org/gems/openstudio-standards/versions/0.2.10)
 * [Ruby 2.2.7](https://www.ruby-lang.org/en/downloads/releases/) (the OpenStudio ruby bindings require a 2.2.x install)
 
-Eventually this will be available through Ruby Gems but for the moment, installing the packae requires you to clone it down and manually install:
+Eventually this will be available through Ruby Gems but for the moment, installing the package requires you to clone it down and manually install:
 ```bash
 gem build superstudio.gemspec
 gem install superstudio-0.1.0.gem
@@ -35,3 +36,20 @@ irb
 > require 'superstudio'
 > => true
 ```
+
+or with Rake:
+```bash
+rake install
+
+# test the CLI by creating a baseline model:
+rake test_create
+```
+
+## Adding a Template Plugin
+Templates contain bits of code to drop in HVAC systems and make sure loads and schedules are properly applied - basically the stuff you need to get the model up and running. Templates in SuperStudio can draw from the OpenStudio SDK itself, OpenStudio-Standards, or the convenience methods in `lib/templates`. 
+
+A local settings folder contains the path to your local templates directory (currently just edit the file `bin/superstudio-settings.json`, this will change in the future). Each Ruby module in this directory is imported at runtime. A template should minimimally include a method that provides an entrypoint - this is the method that gets called when you specify a template on the CLI. So that means:
+```bash
+./bin/superstudio ...  --template bootstrapCentralHwChwVavBasic
+```
+Will call the method `bootstrapCentralHwChwVavBasic` using Ruby's `__send__` 
