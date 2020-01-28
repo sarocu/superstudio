@@ -27,6 +27,14 @@ class SuperStudio
         end
     end
 
+    def save_xml
+        if @input[:build_path]
+            @modeler.persist_xml(@model, @input[:build_path])
+        else
+            @modeler.persist_xml(@model, @input[:osm])
+        end
+    end
+
     def add_weather
         if @input[:epw]
             puts
@@ -159,6 +167,11 @@ o = OptionParser.new do |option|
     option.on('--version', 'SuperStudio CLI Version Number') do 
         options[:version] = true
     end
+
+    options[:xml] = false
+    option.on('--xml', 'Save the model in gbXML format') do 
+        options[:xml] = true
+    end
 end.parse!
 
 puts
@@ -220,4 +233,8 @@ if options[:systems]
 end
 
 # if the user is updating an existing model and hasn't specified a build_path, save back to the original model
-modeler.save
+if options[:xml]
+    modeler.save_xml
+else
+    modeler.save
+end

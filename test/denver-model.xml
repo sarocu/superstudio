@@ -1,0 +1,15 @@
+<gbXML SurfaceReferenceLocation="Centerline" xsi:schemaLocation="http://www.gbxml.org/schema http://gbxml.org/schema/6-01/GreenBuildingXML_Ver6.01.xsd" useSIUnitsForResults="true" xmlns:xsd="http://www.w3.org/2001/XMLSchema" temperatureUnit="C" areaUnit="SquareMeters" xmlns:xhtml="http://www.w3.org/1999/xhtml" lengthUnit="Meters" version="6.01" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" volumeUnit="CubicMeters" xmlns="http://www.gbxml.org/schema">
+  <DocumentHistory>
+    <CreatedBy date="2020-01-28T10:48:06-07:00" programId="openstudio" personId="unknown"/>
+    <ProgramInfo id="openstudio">
+      <ProductName>OpenStudio</ProductName>
+      <Version>2.9.1</Version>
+      <Platform>Apple</Platform>
+      <ProjectEntity/>
+    </ProgramInfo>
+    <PersonInfo id="unknown">
+      <FirstName>Unknown</FirstName>
+      <LastName>Unknown</LastName>
+    </PersonInfo>
+  </DocumentHistory>
+</gbXML>

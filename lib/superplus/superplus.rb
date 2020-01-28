@@ -14,13 +14,34 @@ module Superplus
 
     def self.load_model(model_path)
         p = File.expand_path(model_path)
+        if File.extname(p) == '.xml'
+            puts 'Identified gbXML file, translating...'
+            load_gbxml(p)
+            return
+        end
+
         begin
             return OpenStudio::Model::Model.load(p)
         rescue => exception
             puts '💣  error!! 💣'
             puts 'could not load OSM file'
             puts exception
-            
+        end
+    end
+
+    def self.load_gbxml(model_path)
+        translator = OpenStudio::GbXML::GbXMLReverseTranslator.new
+        begin
+            model = translator.loadModel(model_path)
+            puts model.get
+            if model.nil?
+                raise ModelLoadException.new "The gbXML file is malformed"
+            end
+            return model
+        rescue => exception
+            puts '💣  error!! 💣'
+            puts 'could not load XML file'
+            puts exception
         end
     end
 
@@ -44,6 +65,16 @@ module Superplus
         p = OpenStudio::Path.new(path)
         model.toIdfFile.save(p, true)
         puts '💾 saved model to disc 💾'
+    end
+
+    def self.persist_xml(model, path)
+        persist(model, path)
+        
+        path = path + '.xml'
+        puts path
+        p = OpenStudio::Path.new(path)
+        translator = OpenStudio::GbXML::GbXMLForwardTranslator.new
+        translator.modelToGbXML(model, path)
     end
 
     def self.add_epw(model, weather_path)
@@ -151,5 +182,12 @@ module Superplus
             puts exception
             return model
         end
+    end
+end
+
+class ModelLoadException < StandardError
+    def initialize(msg="The Model Failed to Load", exception_type="custom")
+        @exception_type = exception_type
+        super(msg)
     end
 end
