@@ -52,4 +52,11 @@ A local settings folder contains the path to your local templates directory (cur
 ```bash
 ./bin/superstudio ...  --template bootstrapCentralHwChwVavBasic
 ```
-Will call the method `bootstrapCentralHwChwVavBasic` using Ruby's `__send__` 
+Will call the method `bootstrapCentralHwChwVavBasic` using Ruby's `__send__`
+
+## Git Pre-Commit Hooks
+`pre-commit` and `rubocop` are required as dev dependencies in the Gemfile. These will enforce style guidelines and common linting. Get started with pre-commit hooks by running `pre-commit install`
+
+Run the pre-commit scripts on all files outside of a commit with a `pre-commit run --all-files`
+
+To run the linter, simply run `rubocop` in the project root.

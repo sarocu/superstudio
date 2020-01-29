@@ -5,173 +5,173 @@ require 'json'
 require 'superstudio'
 
 class SuperStudio
-    def initialize(input, options)
-        @modeler = Superplus
-        @input = input
-        @options = options
+  def initialize(input, options)
+    @modeler = Superplus
+    @input = input
+    @options = options
+  end
+
+  def create
+    @model = @modeler.create_standard_model(@input[:building_type], @input[:climate_zone], @input[:standard], @input[:build_path], @options[:debug])
+  end
+
+  def load
+    @model = @modeler.load_model(@input[:osm]).get
+  end
+
+  def save
+    if @input[:build_path]
+      @modeler.persist(@model, @input[:build_path])
+    else
+      @modeler.persist(@model, @input[:osm])
+    end
+  end
+
+  def save_xml
+    if @input[:build_path]
+      @modeler.persist_xml(@model, @input[:build_path])
+    else
+      @modeler.persist_xml(@model, @input[:osm])
+    end
+  end
+
+  def add_weather
+    if @input[:epw]
+      puts
+      puts '☀️ ⛅ ⛈️ adding energyplus weather file ☀️ ⛅ ⛈️'
+      @model = @modeler.add_epw(@model, @input[:epw])
     end
 
-    def create
-        @model = @modeler.create_standard_model(@input[:building_type], @input[:climate_zone], @input[:standard], @input[:build_path] , @options[:debug])
+    if @input[:ddy]
+      puts
+      puts '❄️ 🌨️ ☀️ adding design day file ❄️ 🌨️ ☀️'
+      @model = @modeler.add_ddy(@model, @input[:ddy])
     end
+  end
 
-    def load
-        @model = @modeler.load_model(@input[:osm]).get
-    end
+  def swap_geometry
+    @model = @modeler.merge_geometry(@input[:json], @model)
+  end
 
-    def save
-        if @input[:build_path]
-            @modeler.persist(@model, @input[:build_path])
-        else
-            @modeler.persist(@model, @input[:osm])
-        end
-    end
+  def apply_zoning
+    puts
+    puts 'Applying Zoning Strategy: One Zone per Space'
+    @model = @modeler.assign_zone_per_space(@model)
+  end
 
-    def save_xml
-        if @input[:build_path]
-            @modeler.persist_xml(@model, @input[:build_path])
-        else
-            @modeler.persist_xml(@model, @input[:osm])
-        end
-    end
+  def apply_wwr
+    puts
+    puts '🏗️ Applying a Window-Wall Ratio 🏗️'
+    @model = @modeler.apply_wwr(@model, @input[:wwr].to_f)
+  end
 
-    def add_weather
-        if @input[:epw]
-            puts
-            puts '☀️ ⛅ ⛈️ adding energyplus weather file ☀️ ⛅ ⛈️'
-            @model = @modeler.add_epw(@model, @input[:epw])
-        end
+  def scale_geometry
+    puts
+    puts '🧱 Scaling the floor area of the building 🏗🧱'
+    @model = @modeler.scale_floor_area(@model, @input[:floor_area].to_f)
+  end
 
-        if @input[:ddy]
-            puts
-            puts '❄️ 🌨️ ☀️ adding design day file ❄️ 🌨️ ☀️'
-            @model = @modeler.add_ddy(@model, @input[:ddy])
-        end
-    end
-
-    def swap_geometry
-        @model = @modeler.merge_geometry(@input[:json], @model)
-    end
-
-    def apply_zoning
-        puts 
-        puts 'Applying Zoning Strategy: One Zone per Space'
-        @model = @modeler.assign_zone_per_space(@model)
-    end
-
-    def apply_wwr
-        puts 
-        puts '🏗️ Applying a Window-Wall Ratio 🏗️'
-        @model = @modeler.apply_wwr(@model, @input[:wwr].to_f)
-    end
-
-    def scale_geometry
-        puts 
-        puts '🧱 Scaling the floor area of the building 🏗🧱'
-        @model = @modeler.scale_floor_area(@model, @input[:floor_area].to_f)
-    end
-
-    def apply_template
-        puts
-        puts 'Applying 🌡️ HVAC🌡️ template...'
-        @model = @modeler.apply_template(@model, @input[:template])
-    end
+  def apply_template
+    puts
+    puts 'Applying 🌡️ HVAC🌡️ template...'
+    @model = @modeler.apply_template(@model, @input[:template])
+  end
 end
 
 path = {}
 options = {}
 
 o = OptionParser.new do |option|
-    option.banner = '🏢💡 SuperStudio 🔌🏢 \n Usage: superstudio init -t [building_type] -z [climate_zone] -s [standard] -p [build_path]'
+  option.banner = '🏢💡 SuperStudio 🔌🏢 \n Usage: superstudio init -t [building_type] -z [climate_zone] -s [standard] -p [build_path]'
 
-    # Path Options
-    option.on('-t [ARG]', '--building_type [ARG]', 'Enter the primary building occupancy type') do |building_type|
-        path[:building_type] = building_type
-    end
+  # Path Options
+  option.on('-t [ARG]', '--building_type [ARG]', 'Enter the primary building occupancy type') do |building_type|
+    path[:building_type] = building_type
+  end
 
-    option.on('-z [ARG]', '--climate_zone [ARG]', 'Enter the climate zone the building is located in') do |cz|
-        path[:climate_zone] = cz
-    end
+  option.on('-z [ARG]', '--climate_zone [ARG]', 'Enter the climate zone the building is located in') do |cz|
+    path[:climate_zone] = cz
+  end
 
-    option.on('-s [ARG]', '--standard [ARG]', 'Enter the ASHRAE standard to make assumptions against') do |standard|
-        path[:standard] = standard
-    end
+  option.on('-s [ARG]', '--standard [ARG]', 'Enter the ASHRAE standard to make assumptions against') do |standard|
+    path[:standard] = standard
+  end
 
-    option.on('-p [ARG]', '--build_path [ARG]', 'Enter the path to save the model to') do |build_path|
-        path[:build_path] = build_path
-    end
+  option.on('-p [ARG]', '--build_path [ARG]', 'Enter the path to save the model to') do |build_path|
+    path[:build_path] = build_path
+  end
 
-    option.on('--epw [ARG]', 'Path to an optional weather file') do |weather|
-        path[:epw] = weather
-    end
+  option.on('--epw [ARG]', 'Path to an optional weather file') do |weather|
+    path[:epw] = weather
+  end
 
-    option.on('--ddy [ARG]', 'Path to an optional DDY file') do |weather|
-        path[:ddy] = weather
-    end
+  option.on('--ddy [ARG]', 'Path to an optional DDY file') do |weather|
+    path[:ddy] = weather
+  end
 
-    option.on('--json [ARG]', 'Path to optional geometry JSON file') do |geo|
-        path[:json] = geo
-    end
+  option.on('--json [ARG]', 'Path to optional geometry JSON file') do |geo|
+    path[:json] = geo
+  end
 
-    option.on('--zoning [ARG]', 'Zoning strategy to implement (e.g. one zone per space') do |zone|
-        path[:zone] = zone
-    end
+  option.on('--zoning [ARG]', 'Zoning strategy to implement (e.g. one zone per space') do |zone|
+    path[:zone] = zone
+  end
 
-    option.on('--template [ARG]', 'Basic system template to apply to the model') do |template|
-        path[:template] = template
-    end
+  option.on('--template [ARG]', 'Basic system template to apply to the model') do |template|
+    path[:template] = template
+  end
 
-    option.on('--wwr [ARG]', 'Window to wall ratio (as decimal)') do |wwr|
-        path[:wwr] = wwr
-    end
+  option.on('--wwr [ARG]', 'Window to wall ratio (as decimal)') do |wwr|
+    path[:wwr] = wwr
+  end
 
-    option.on('--floor_area [ARG]', 'Gross floor area to scale the building to') do |area|
-        path[:floor_area] = area
-    end
+  option.on('--floor_area [ARG]', 'Gross floor area to scale the building to') do |area|
+    path[:floor_area] = area
+  end
 
-    option.on('--model [ARG]', 'Path to existing OSM') do |osm|
-        path[:osm] = osm
-    end
+  option.on('--model [ARG]', 'Path to existing OSM') do |osm|
+    path[:osm] = osm
+  end
 
-    options[:create] = false
-    option.on('--create', 'Create a New Energy Model') do
-        options[:create] = true
-    end
+  options[:create] = false
+  option.on('--create', 'Create a New Energy Model') do
+    options[:create] = true
+  end
 
-    options[:update] = false
-    option.on('--update', 'Run commands against an existing model') do
-        options[:update] = true
-    end
+  options[:update] = false
+  option.on('--update', 'Run commands against an existing model') do
+    options[:update] = true
+  end
 
-    options[:geometry] = false
-    option.on('--geometry', 'Add optional geometry data') do
-        options[:geometry] = true
-    end
+  options[:geometry] = false
+  option.on('--geometry', 'Add optional geometry data') do
+    options[:geometry] = true
+  end
 
-    options[:debug] = false
-    option.on('-d', '--debug', 'Print additional debug info') do 
-        options[:debug] = true
-    end
+  options[:debug] = false
+  option.on('-d', '--debug', 'Print additional debug info') do
+    options[:debug] = true
+  end
 
-    options[:weather] = false
-    option.on('-w', '--weather', 'Add optional weather files') do 
-        options[:weather] = true
-    end
+  options[:weather] = false
+  option.on('-w', '--weather', 'Add optional weather files') do
+    options[:weather] = true
+  end
 
-    options[:systems] = false
-    option.on('--systems', 'Apply a basic HVAC template or SWH template') do 
-        options[:systems] = true
-    end
+  options[:systems] = false
+  option.on('--systems', 'Apply a basic HVAC template or SWH template') do
+    options[:systems] = true
+  end
 
-    options[:version] = false
-    option.on('--version', 'SuperStudio CLI Version Number') do 
-        options[:version] = true
-    end
+  options[:version] = false
+  option.on('--version', 'SuperStudio CLI Version Number') do
+    options[:version] = true
+  end
 
-    options[:xml] = false
-    option.on('--xml', 'Save the model in gbXML format') do 
-        options[:xml] = true
-    end
+  options[:xml] = false
+  option.on('--xml', 'Save the model in gbXML format') do
+    options[:xml] = true
+  end
 end.parse!
 
 puts
@@ -179,62 +179,50 @@ puts '🏢💡 SuperStudio 🔌🏢'
 puts
 
 if options[:version]
-    puts 'SuperStudio v0.1.0'
-    exit
+  puts 'SuperStudio v0.1.0'
+  exit
 end
 
 # Eventually this should be part of a setup process:
 settings_path = File.join(File.dirname(__FILE__), 'superstudio-settings.json')
 settings = JSON.parse(File.read(settings_path))
-Dir.chdir(File.expand_path(settings['templates_dir'])) do 
-    Dir.glob('./*.rb').each{|f| require f}
+Dir.chdir(File.expand_path(settings['templates_dir'])) do
+  Dir.glob('./*.rb').each { |f| require f }
 end
 
 modeler = SuperStudio.new(path, options)
 
 if options[:create]
-    puts '🥾 Bootsrapping Model 🥾'
-    modeler.create
-    puts
-    puts '💯 Got it, model creation finished! 💯'
-    puts 
+  puts '🥾 Bootsrapping Model 🥾'
+  modeler.create
+  puts
+  puts '💯 Got it, model creation finished! 💯'
+  puts
 elsif options[:update]
-    puts '💽  Loading Model 💽'
-    modeler.load
-    puts '💯 Got it, model loaded 💯'
+  puts '💽  Loading Model 💽'
+  modeler.load
+  puts '💯 Got it, model loaded 💯'
 else
-    puts 'Please choose to create a new model or load an existing OSM'
+  puts 'Please choose to create a new model or load an existing OSM'
 end
 
-if options[:weather]
-    modeler.add_weather
-end
+modeler.add_weather if options[:weather]
 
 if options[:geometry]
-    if path[:json]
-        modeler.swap_geometry
-    end
+  modeler.swap_geometry if path[:json]
 
-    if path[:zone]
-        modeler.apply_zoning
-    end
+  modeler.apply_zoning if path[:zone]
 
-    if path[:floor_area]
-        modeler.scale_geometry
-    end
+  modeler.scale_geometry if path[:floor_area]
 
-    if path[:wwr]
-        modeler.apply_wwr
-    end
+  modeler.apply_wwr if path[:wwr]
 end
 
-if options[:systems]
-    modeler.apply_template
-end
+modeler.apply_template if options[:systems]
 
 # if the user is updating an existing model and hasn't specified a build_path, save back to the original model
 if options[:xml]
-    modeler.save_xml
+  modeler.save_xml
 else
-    modeler.save
+  modeler.save
 end
