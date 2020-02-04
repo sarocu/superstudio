@@ -27,6 +27,21 @@ module CentralHwChwVavBasic
       base.add_zone_to_loop(zone, air)
     end
 
+    # Add setpoint managers:
+    mngr = base.outdoor_air_reset
+    base.add_to_supply_outlet(mngr, air)
+
+    chw_schedule = base.simple_setpoint_schedule(6.7)
+    chw_mngr = base.scheduled(chw_schedule)
+    base.add_to_supply_outlet(chw_mngr, chw)
+
+    hw_schedule = base.simple_setpoint_schedule(67.0)
+    hw_mngr = base.scheduled(hw_schedule)
+    base.add_to_supply_outlet(hw_mngr, hw)
+
+    cw_mngr = base.follow_outdoor_air_temperature
+    base.add_to_supply_outlet(cw_mngr, cw)
+
     # Apply some standards assumptions:
 
     base.get_model

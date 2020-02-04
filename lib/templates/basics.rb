@@ -1,7 +1,11 @@
 require_relative './helpers'
+require_relative './setpointmanager'
+require_relative './schedules'
 
 class Basics
   include SystemHelpers
+  include SetpointManagers
+  include BasicSchedules
 
   def initialize(model)
     @model = model
