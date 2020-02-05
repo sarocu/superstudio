@@ -181,6 +181,29 @@ module Superplus
       return model
     end
   end
+
+  def self.export_library(templates='all', building_types='all', climate_zone=nil)
+    raw_template = File.read('./data/example-library.json')
+    template_library = JSON.parse(raw_template)
+
+    space_types = []
+    os_space_types = File.join(__FILE__, '../../assets/space-types.csv')
+    CSV.foreach(os_space_types, headers: true) do |row|
+      unless templates == 'all'
+        if templates != row['Template'] next
+      end
+
+      unless building_types == 'all'
+        if building_types != row['Building Type'] next
+      end
+
+      uuid = SecureRandom.uuid
+      space_name = row['Template'] + ' - ' + row['Building Type'] + ' - ' + row['Space Type']
+      color = Random.new.bytes(3).unpack("H*")[0]
+      space = {:id=>SecureRandom.hex(10), :handle=>"{#{uuid}}", :name=>space_name, :color=>"##{color}"}
+      space_types.push(space)
+    end
+  end
 end
 
 class ModelLoadException < StandardError
