@@ -45,6 +45,17 @@ rake install
 rake test_create
 ```
 
+## Exporting a FloorSpaceJS Library
+The `export` subcommand can be used to create a JSON file that FloorSpaceJS uses to add space types and construction sets to the user interface that can be scripted with measures. You can filter the complete list of OpenStudio-Standards space types by template and building type; the resulting JSON will plug in randomly generated colors for rendering the space types in the editor.
+
+### Usage:
+```bash
+superstudio export --template 189.1-2009 --building_type LargeHotel --output ./hotel.json
+
+# you can also use a Rake task to create a library file with everything:
+rake test_export
+```
+
 ## Adding a Template Plugin
 Templates contain bits of code to drop in HVAC systems and make sure loads and schedules are properly applied - basically the stuff you need to get the model up and running. Templates in SuperStudio can draw from the OpenStudio SDK itself, OpenStudio-Standards, or the convenience methods in `lib/templates`. 
 

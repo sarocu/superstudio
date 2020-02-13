@@ -204,7 +204,7 @@ subcommands = {
 # Check to see if there's a subcommand:
 o.order!
 command = ARGV.shift
-puts command
+
 subcommands[command].order! unless command.nil?
 
 puts
@@ -240,7 +240,6 @@ elsif options[:export]
   path[:lib_template] = 'all' unless path.key?(:lib_template)
   path[:lib_types] = 'all' unless path.key?(:lib_types)
   path[:lib_output] = './library.json' unless path.key?(:lib_output)
-  puts path
   begin
     modeler.export
     puts Rainbow("+ #{path[:lib_output]}").green
@@ -248,7 +247,7 @@ elsif options[:export]
     puts Rainbow("Failed to create file #{path[:lib_output]}").red
     puts Rainbow(exception.to_s).red
   end
-  abort
+  exit true
 else
   puts 'Please choose to create a new model or load an existing OSM'
 end

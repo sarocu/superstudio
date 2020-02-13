@@ -204,7 +204,28 @@ module Superplus
       space = { id: SecureRandom.hex(10), handle: "{#{uuid}}", name: space_name, color: "##{color}" }
       space_types.push(space)
     end
+
+    construction_sets = []
+    os_sets = File.join(File.dirname(__FILE__), '../../assets/construction-sets.csv')
+    CSV.foreach(os_sets, headers: true) do |row|
+      next if row['Building Type'].nil?
+      unless templates == 'all'
+        next if templates != row['Template']
+      end
+
+      unless building_types == 'all'
+        next if building_types != row['Building Type']
+      end
+
+      uuid = SecureRandom.uuid
+      set_name = row['Template'] + ' - ' + row['Building Type']
+      color = Random.new.bytes(3).unpack('H*')[0]
+      construction_set = { id: SecureRandom.hex(10), handle: "{#{uuid}}", name: set_name, color: "##{color}" }
+      construction_sets.push(construction_set)
+    end
+
     template_library['space_types'] = space_types
+    template_library['construction_sets'] = construction_sets
     template_library
   end
 end
