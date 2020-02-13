@@ -2,6 +2,8 @@
 
 require 'optparse'
 require 'json'
+require 'rainbow'
+
 require 'superstudio'
 
 class SuperStudio
@@ -32,6 +34,14 @@ class SuperStudio
       @modeler.persist_xml(@model, @input[:build_path])
     else
       @modeler.persist_xml(@model, @input[:osm])
+    end
+  end
+
+  def export
+    library = @modeler.export_library(templates = @input[:lib_template], building_types = @input[:lib_types], climate_zone = nil)
+    path = File.expand_path(@input[:lib_output])
+    File.open(path, 'w') do |f|
+      f.write(JSON.pretty_generate(library))
     end
   end
 
@@ -172,7 +182,30 @@ o = OptionParser.new do |option|
   option.on('--xml', 'Save the model in gbXML format') do
     options[:xml] = true
   end
-end.parse!
+end
+# end.parse!
+
+subcommands = {
+  'export' => OptionParser.new do |opts|
+    options[:export] = true
+    opts.banner = 'Usage: superstudio export --templates [options] --occupancies [options] --name ./path/to/file.json'
+    opts.on('--template [ARG]', '-t [ARG]', 'Template to include in the library export, defaults to all') do |template|
+      path[:lib_template] = template
+    end
+    opts.on('--building_type [ARG]', '-b [ARG]', 'Building type to include in the library export, defaults to all') do |building_type|
+      path[:lib_types] = building_type
+    end
+    opts.on('--output [ARG]', '-o [ARG]', 'Output file to save the JSON to') do |pathname|
+      path[:lib_output] = pathname
+    end
+  end
+}
+
+# Check to see if there's a subcommand:
+o.order!
+command = ARGV.shift
+puts command
+subcommands[command].order! unless command.nil?
 
 puts
 puts '🏢💡 SuperStudio 🔌🏢'
@@ -202,6 +235,20 @@ elsif options[:update]
   puts '💽  Loading Model 💽'
   modeler.load
   puts '💯 Got it, model loaded 💯'
+elsif options[:export]
+  puts '📖  Creating a Library File 📖 '
+  path[:lib_template] = 'all' unless path.key?(:lib_template)
+  path[:lib_types] = 'all' unless path.key?(:lib_types)
+  path[:lib_output] = './library.json' unless path.key?(:lib_output)
+  puts path
+  begin
+    modeler.export
+    puts Rainbow("+ #{path[:lib_output]}").green
+  rescue => exception
+    puts Rainbow("Failed to create file #{path[:lib_output]}").red
+    puts Rainbow(exception.to_s).red
+  end
+  abort
 else
   puts 'Please choose to create a new model or load an existing OSM'
 end
@@ -220,7 +267,6 @@ end
 
 modeler.apply_template if options[:systems]
 
-# if the user is updating an existing model and hasn't specified a build_path, save back to the original model
 if options[:xml]
   modeler.save_xml
 else

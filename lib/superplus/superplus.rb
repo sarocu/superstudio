@@ -182,27 +182,30 @@ module Superplus
     end
   end
 
-  def self.export_library(templates='all', building_types='all', climate_zone=nil)
-    raw_template = File.read('./data/example-library.json')
+  def self.export_library(templates = 'all', building_types = 'all', _climate_zone = nil)
+    template_path = File.join(File.dirname(__FILE__), '../../assets/example-library.json')
+    raw_template = File.read(template_path)
     template_library = JSON.parse(raw_template)
 
     space_types = []
-    os_space_types = File.join(__FILE__, '../../assets/space-types.csv')
+    os_space_types = File.join(File.dirname(__FILE__), '../../assets/space-types.csv')
     CSV.foreach(os_space_types, headers: true) do |row|
       unless templates == 'all'
-        if templates != row['Template'] next
+        next if templates != row['Template']
       end
 
       unless building_types == 'all'
-        if building_types != row['Building Type'] next
+        next if building_types != row['Building Type']
       end
 
       uuid = SecureRandom.uuid
       space_name = row['Template'] + ' - ' + row['Building Type'] + ' - ' + row['Space Type']
-      color = Random.new.bytes(3).unpack("H*")[0]
-      space = {:id=>SecureRandom.hex(10), :handle=>"{#{uuid}}", :name=>space_name, :color=>"##{color}"}
+      color = Random.new.bytes(3).unpack('H*')[0]
+      space = { id: SecureRandom.hex(10), handle: "{#{uuid}}", name: space_name, color: "##{color}" }
       space_types.push(space)
     end
+    template_library['space_types'] = space_types
+    template_library
   end
 end
 

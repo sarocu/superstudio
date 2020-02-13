@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
     'lib/templates/schedules.rb',
     'lib/superstudio.rb',
     'assets/space-types.csv',
+    'assets/example-library.json'
   ]
   s.homepage = 'https://www.sarocu.com/'
 end

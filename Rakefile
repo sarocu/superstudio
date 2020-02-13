@@ -17,3 +17,7 @@ task :test_gbxml do
   sh './test/test_update_gbxml.sh'
   puts
 end
+
+task :test_export do
+  sh './test/test_library_export.sh'
+end

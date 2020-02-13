@@ -42,7 +42,7 @@ module CentralHwChwVavBasic
     cw_mngr = base.follow_outdoor_air_temperature
     base.add_to_supply_outlet(cw_mngr, cw)
 
-    return base.get_model
+    base.get_model
   end
 end
 
