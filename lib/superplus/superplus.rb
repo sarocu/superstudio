@@ -1,10 +1,13 @@
 require_relative 'standard'
+require_relative 'library'
 require_relative '../templates/templates'
 require_relative '../templates/basics'
 require 'openstudio'
 require 'json'
 
 module Superplus
+  include StandardsLibrary
+
   def self.create_standard_model(building_type, climate_zone, standard, build_dir, debug)
     puts 'creating a new standards based prototype model 🏠 🏥 🏢 🏬 🏰 '
     modeler = StandardModeler.new(building_type, climate_zone, standard, build_dir)
@@ -43,7 +46,7 @@ module Superplus
     end
   end
 
-  def self.merge_geometry(json_file, model)
+  def self.merge_geometry(json_file, model, assumptions = false)
     puts
     puts '📂 reading JSON geometry...'
     floorplan = OpenStudio::FloorplanJS.load(json_file)
@@ -54,6 +57,13 @@ module Superplus
     puts '🔷 merging model with the new geometry... 🔷'
     merge = OpenStudio::Model::ModelMerger.new
     merge.mergeModels(model, reverse_translate.get, threeJS.handleMapping)
+
+    if assumptions
+      puts
+      puts '✍🏽  Assigning standards based assumptions...'
+      model = StandardsLibrary.find_and_apply_space_types(model, json_file)
+    end
+
     puts
     puts '🚚 success, returning model with 🥬 fresh 🥬 geometry 🚚'
     model

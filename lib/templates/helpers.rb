@@ -8,10 +8,4 @@ module SystemHelpers
   def always_on_availability_schedule
     OpenStudio::Model::ScheduleCompact.new(@model, 1)
   end
-
-  def heating_setpoint_by_occupancy(occupancy)
-  end
-
-  def cooling_setpoint_by_occupancy(occupancy)
-  end
 end

@@ -60,7 +60,7 @@ class SuperStudio
   end
 
   def swap_geometry
-    @model = @modeler.merge_geometry(@input[:json], @model)
+    @model = @modeler.merge_geometry(@input[:json], @model, @options[:assumptions])
   end
 
   def apply_zoning
@@ -158,6 +158,11 @@ o = OptionParser.new do |option|
     options[:geometry] = true
   end
 
+  options[:assumptions] = false
+  option.on('--assumptions', '-a', 'Add ASHRAE standards based assumptions to the model based on space type') do
+    options[:assumptions] = true
+  end
+
   options[:debug] = false
   option.on('-d', '--debug', 'Print additional debug info') do
     options[:debug] = true
@@ -205,7 +210,9 @@ subcommands = {
 o.order!
 command = ARGV.shift
 
-subcommands[command].order! unless command.nil?
+if subcommands[command]
+  subcommands[command].order! unless command.nil?
+end
 
 puts
 puts '🏢💡 SuperStudio 🔌🏢'

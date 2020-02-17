@@ -9,6 +9,7 @@ Gem::Specification.new do |s|
   s.files = [
     'lib/superplus/standard.rb',
     'lib/superplus/superplus.rb',
+    'lib/superplus/library.rb',
     'lib/templates/basics.rb',
     'lib/templates/templates.rb',
     'lib/templates/basics.rb',

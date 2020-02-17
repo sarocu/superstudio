@@ -1,1 +1,1 @@
-./bin/superstudio export -o ./test/library.json
+./bin/superstudio export  -o ./test/library.json
