@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/sarocu/superstudio.git
-  revision: 78fe8edfc3102ddab8df274bb4661ee6f43d9f58
+  revision: c8bceb043af59087e6b731809657a887ed9bfd53
   branch: master
   specs:
     superstudio (0.1.0)
@@ -8,14 +8,40 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
+    ast (2.4.0)
     openstudio-standards (0.2.10)
+    paint (2.1.1)
+    parser (2.7.0.2)
+      ast (~> 2.4.0)
+    pluginator (1.5.0)
+    powerpack (0.1.2)
+    pre-commit (0.39.0)
+      pluginator (~> 1.5)
+    rainbow (2.2.2)
+      rake
+    rake (13.0.1)
+    rubocop (0.39.0)
+      parser (>= 2.3.0.7, < 3.0)
+      powerpack (~> 0.1)
+      rainbow (>= 1.99.1, < 3.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (~> 1.0, >= 1.0.1)
+    ruby-progressbar (1.10.1)
+    unicode-display_width (1.6.1)
+    whirly (0.2.6)
+      unicode-display_width (~> 1.1)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   openstudio-standards
+  paint
+  pre-commit
+  rainbow
+  rubocop (~> 0.39.0)
   superstudio!
+  whirly
 
 BUNDLED WITH
    1.15.3

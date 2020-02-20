@@ -4,6 +4,9 @@ require_relative '../templates/templates'
 require_relative '../templates/basics'
 require 'openstudio'
 require 'json'
+require 'rainbow'
+require 'whirly'
+require 'fileutils'
 
 module Superplus
   include StandardsLibrary
@@ -56,7 +59,11 @@ module Superplus
     puts
     puts '🔷 merging model with the new geometry... 🔷'
     merge = OpenStudio::Model::ModelMerger.new
-    merge.mergeModels(model, reverse_translate.get, threeJS.handleMapping)
+    Whirly.start spinner: 'dots' do
+      suppress_output do
+        merge.mergeModels(model, reverse_translate.get, threeJS.handleMapping)
+      end
+    end
 
     if assumptions
       puts
@@ -65,7 +72,7 @@ module Superplus
     end
 
     puts
-    puts '🚚 success, returning model with 🥬 fresh 🥬 geometry 🚚'
+    puts Rainbow('🚚 success, returning model with 🥬 fresh 🥬 geometry 🚚').blue
     model
   end
 
@@ -124,7 +131,7 @@ module Superplus
       end
     else
       OpenStudio.logFree(OpenStudio::Error, 'openstudio.weather.Model', "Could not find .ddy file for: #{ddy_file}.")
-      puts "Could not find .ddy file for: #{ddy_file}."
+      puts Rainbow("Could not find .ddy file for: #{ddy_file}.").red
       success = false
     end
     model
@@ -171,13 +178,14 @@ module Superplus
 
   def self.scale_floor_area(model, floor_area)
     existing_area = get_gross_area(model)
-    puts 'Existing gross floor area: ' + existing_area.to_s
-    scalar = (floor_area / existing_area)**0.5
-
-    puts '......'
-    new_model = BTAP::Geometry.scale_model(model, scalar, scalar, 1)
-    puts 'New gross floor area: ' + get_gross_area(new_model).to_s
-    new_model
+    puts Rainbow('Existing gross floor area: ' + existing_area.to_s).yellow
+    Whirly.start spinner: 'pong' do
+      Whirly.status = 'Scaling geometry...'
+      scalar = (floor_area / existing_area)**0.5
+      new_model = BTAP::Geometry.scale_model(model, scalar, scalar, 1)
+      puts Rainbow('New gross floor area: ' + get_gross_area(new_model).to_s).green
+      return new_model
+    end
   end
 
   def self.apply_template(model, template)
@@ -186,8 +194,8 @@ module Superplus
       updated_model = mytemplates.__send__(template, model)
       return updated_model
     rescue => exception
-      puts 'Exception occurred executing template: '
-      puts exception
+      puts Rainbow('Exception occurred executing template: ').red
+      puts Rainbow(exception).red
       return model
     end
   end
@@ -237,6 +245,19 @@ module Superplus
     template_library['space_types'] = space_types
     template_library['construction_sets'] = construction_sets
     template_library
+  end
+
+  def self.suppress_output
+    original_stdout = $stdout.clone
+    original_stderr = $stderr.clone
+    log_path = File.join(Dir.pwd, 'logs')
+    FileUtils.mkdir_p(log_path) unless File.directory?(log_path)
+    $stderr.reopen File.new(File.join(Dir.pwd, 'logs', 'os-stderr.txt'), 'w')
+    $stdout.reopen File.new(File.join(Dir.pwd, 'logs', 'os-stdout.txt'), 'w')
+    yield
+  ensure
+    $stdout.reopen original_stdout
+    $stderr.reopen original_stderr
   end
 end
 

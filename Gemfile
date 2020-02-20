@@ -5,6 +5,8 @@ gem 'openstudio-standards'
 gem 'superstudio', github: 'sarocu/superstudio', branch: 'master'
 
 gem 'rainbow'
+gem 'whirly'
+gem 'paint'
 
 group :development do
   gem 'pre-commit', require: false

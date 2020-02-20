@@ -32,6 +32,10 @@ Eventually this will be available through Ruby Gems but for the moment, installi
 ```bash
 gem build superstudio.gemspec
 gem install superstudio-0.1.0.gem
+
+# install the rest of the dependencies:
+bundle
+
 irb
 > require 'superstudio'
 > => true

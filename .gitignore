@@ -3,3 +3,4 @@ test/true/*
 .DS_Store
 test/.DS_Store
 true/
+logs/*
