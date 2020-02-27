@@ -1,6 +1,6 @@
 GIT
   remote: git://github.com/sarocu/superstudio.git
-  revision: c8bceb043af59087e6b731809657a887ed9bfd53
+  revision: afc350b13ea606902ae55d935de7fb9e213e8905
   branch: master
   specs:
     superstudio (0.1.0)
@@ -8,10 +8,44 @@ GIT
 GEM
   remote: http://rubygems.org/
   specs:
+    ansi (1.5.0)
     ast (2.4.0)
+    builder (3.2.4)
+    docile (1.3.2)
+    git (1.3.0)
+    json (2.3.0)
+    json_pure (2.2.0)
+    minitest (5.4.3)
+    minitest-reporters (1.2.0)
+      ansi
+      builder
+      minitest (>= 5.0)
+      ruby-progressbar
+    openstudio-common-measures (0.1.0)
+      openstudio-extension (~> 0.1.3)
+      openstudio-standards (~> 0.2.10)
+    openstudio-extension (0.1.5)
+      bundler (~> 1.9)
+      json_pure (= 2.2.0)
+      openstudio-workflow (~> 1.3.4)
+      openstudio_measure_tester (~> 0.1.7)
+      parallel (~> 1.12.0)
+    openstudio-model-articulation (0.1.0)
+      openstudio-common-measures (~> 0.1.0)
+      openstudio-standards (~> 0.2.10)
     openstudio-standards (0.2.10)
+    openstudio-workflow (1.3.4)
+    openstudio_measure_tester (0.1.7)
+      git (= 1.3.0)
+      minitest (= 5.4.3)
+      minitest-reporters (= 1.2.0)
+      rake (= 12.3.1)
+      rubocop (= 0.54.0)
+      rubocop-checkstyle_formatter (= 0.4)
+      simplecov (= 0.16.1)
     paint (2.1.1)
-    parser (2.7.0.2)
+    parallel (1.12.1)
+    parser (2.7.0.3)
       ast (~> 2.4.0)
     pluginator (1.5.0)
     powerpack (0.1.2)
@@ -19,14 +53,22 @@ GEM
       pluginator (~> 1.5)
     rainbow (2.2.2)
       rake
-    rake (13.0.1)
-    rubocop (0.39.0)
-      parser (>= 2.3.0.7, < 3.0)
+    rake (12.3.1)
+    rubocop (0.54.0)
+      parallel (~> 1.10)
+      parser (>= 2.5)
       powerpack (~> 0.1)
-      rainbow (>= 1.99.1, < 3.0)
+      rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
+    rubocop-checkstyle_formatter (0.4.0)
+      rubocop (>= 0.35.1)
     ruby-progressbar (1.10.1)
+    simplecov (0.16.1)
+      docile (~> 1.1)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.2)
     unicode-display_width (1.6.1)
     whirly (0.2.6)
       unicode-display_width (~> 1.1)
@@ -35,11 +77,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  openstudio-model-articulation
   openstudio-standards
   paint
   pre-commit
   rainbow
-  rubocop (~> 0.39.0)
+  rubocop (~> 0.54.0)
   superstudio!
   whirly
 

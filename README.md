@@ -54,7 +54,7 @@ The `export` subcommand can be used to create a JSON file that FloorSpaceJS uses
 
 ### Usage:
 ```bash
-superstudio export --template 189.1-2009 --building_type LargeHotel --output ./hotel.json
+superstudio export --template 90.1-2004 --building_type LargeHotel --output ./hotel.json
 
 # you can also use a Rake task to create a library file with everything:
 rake test_export

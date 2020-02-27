@@ -28,7 +28,7 @@ module Superplus
 
     begin
       return OpenStudio::Model::Model.load(p)
-    rescue => exception
+    rescue StandardError => exception
       puts '💣  error!! 💣'
       puts 'could not load OSM file'
       puts exception
@@ -40,9 +40,9 @@ module Superplus
     begin
       model = translator.loadModel(model_path)
       puts model.get
-      raise ModelLoadException.new 'The gbXML file is malformed' if model.nil?
+      raise ModelLoadException, 'The gbXML file is malformed' if model.nil?
       return model
-    rescue => exception
+    rescue StandardError => exception
       puts '💣  error!! 💣'
       puts 'could not load XML file'
       puts exception
@@ -68,7 +68,7 @@ module Superplus
     if assumptions
       puts
       puts '✍🏽  Assigning standards based assumptions...'
-      model = StandardsLibrary.find_and_apply_space_types(model, json_file)
+      model = StandardsLibrary.find_and_apply_space_types(model)
     end
 
     puts
@@ -193,7 +193,7 @@ module Superplus
     begin
       updated_model = mytemplates.__send__(template, model)
       return updated_model
-    rescue => exception
+    rescue StandardError => exception
       puts Rainbow('Exception occurred executing template: ').red
       puts Rainbow(exception).red
       return model

@@ -250,7 +250,7 @@ elsif options[:export]
   begin
     modeler.export
     puts Rainbow("+ #{path[:lib_output]}").green
-  rescue => exception
+  rescue StandardError => exception
     puts Rainbow("Failed to create file #{path[:lib_output]}").red
     puts Rainbow(exception.to_s).red
   end

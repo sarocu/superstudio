@@ -71,9 +71,9 @@ class Basics
 
   def vav_terminal(reheat = nil, availability_schedule)
     if reheat
-      return OpenStudio::Model::AirTerminalSingleDuctVAVReheat.new(@model, availability_schedule, reheat)
+      OpenStudio::Model::AirTerminalSingleDuctVAVReheat.new(@model, availability_schedule, reheat)
     else
-      return OpenStudio::Model::AirTerminalSingleDuctVAVNoReheat.new(@model, availability_schedule)
+      OpenStudio::Model::AirTerminalSingleDuctVAVNoReheat.new(@model, availability_schedule)
     end
   end
 
@@ -87,7 +87,7 @@ class Basics
     begin
       fan = __send__(fan_type)
       add_to_supply_outlet(fan, air_loop)
-    rescue => exception
+    rescue StandardError => exception
       puts 'Error creating fan, incorrect argument supplied'
       puts 'Got ' + fan_type.to_s
       puts 'Making a single speed fan instead '
