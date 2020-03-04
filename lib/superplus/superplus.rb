@@ -209,11 +209,11 @@ module Superplus
     os_space_types = File.join(File.dirname(__FILE__), '../../assets/space-types.csv')
     CSV.foreach(os_space_types, headers: true) do |row|
       unless templates == 'all'
-        next if templates != row['Template']
+        next unless templates.include? row['Template']
       end
 
       unless building_types == 'all'
-        next if building_types != row['Building Type']
+        next unless building_types.include? row['Building Type']
       end
 
       uuid = SecureRandom.uuid

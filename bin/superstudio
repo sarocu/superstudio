@@ -194,11 +194,12 @@ subcommands = {
   'export' => OptionParser.new do |opts|
     options[:export] = true
     opts.banner = 'Usage: superstudio export --templates [options] --occupancies [options] --name ./path/to/file.json'
-    opts.on('--template [ARG]', '-t [ARG]', 'Template to include in the library export, defaults to all') do |template|
+    opts.on('--template [ARG]', '-t [ARG]', Array, 'Template(s) to include in the library export, defaults to all') do |template|
       path[:lib_template] = template
     end
-    opts.on('--building_type [ARG]', '-b [ARG]', 'Building type to include in the library export, defaults to all') do |building_type|
+    opts.on('--building_type [ARG]', '-b [ARG]', Array, 'Building type(s) to include in the library export, defaults to all') do |building_type|
       path[:lib_types] = building_type
+      puts building_type.class
     end
     opts.on('--output [ARG]', '-o [ARG]', 'Output file to save the JSON to') do |pathname|
       path[:lib_output] = pathname
