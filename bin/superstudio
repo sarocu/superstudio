@@ -225,7 +225,7 @@ if options[:version]
 end
 
 # Eventually this should be part of a setup process:
-settings_path = File.join(File.dirname(__FILE__), 'superstudio-settings.json')
+settings_path = File.expand_path("~/.superstudio/superstudio-settings.json")
 settings = JSON.parse(File.read(settings_path))
 Dir.chdir(File.expand_path(settings['templates_dir'])) do
   Dir.glob('./*.rb').each { |f| require f }

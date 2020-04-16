@@ -1,0 +1,11 @@
+version: "3"
+services:
+  model:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - model:/code/model
+
+volumes:
+  model:
