@@ -97,8 +97,11 @@ Docker provides a great way to produce portable models that will run the same on
 docker-compose run model /bin/bash
 
 # Run a OS workflow with the OpenStudio-CLI:
-docker-compose run model openstudio run --workflow /code/model/workflow.osm
+docker-compose run model openstudio run --workflow /code/model/workflow.json
 
 # Rebuild the container if you made changes to the Dockerfile:
 docker-compose build model
+
+# Something go wrong? Check your logs:
+docker-compose logs model
 ```

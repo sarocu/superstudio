@@ -1,0 +1,20 @@
+FROM sarocu/superstudio:latest
+
+run mkdir /code/model
+
+# Copy over geometry + weather files:
+COPY ./model/floorplan.json /code/model/
+COPY ./model/USA_CO_Denver.Intl.AP.725650_TMY3.epw /code/model
+
+# Create a standards based model:
+# -t sets an OpenStudio-Standards building type
+# -z sets the climate zone
+# -s sets an OpenStudio-Standards standard template
+# -p sets the path to save the model to
+#  --geometry --json /path/... tells superstudio to merge geometry from a FloorPlanJS file and sets the path to the file
+# -a true tells superstudio to use assumptions from OS-Standards
+WORKDIR /code/model
+RUN superstudio --create -t 'LargeOffice' -z 'ASHRAE 169-2006-5A' -s '90.1-2013' -p /code/model/denver-model  --geometry --json /code/model/floorplan.json -a true
+
+# Create a workflow.json file:
+RUN superstudio workflow --new --model ./denver-model.osm --weather ./USA_CO_Denver.Intl.AP.725650_TMY3.epw

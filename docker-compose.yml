@@ -3,10 +3,11 @@ services:
   model:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile-model
     working_dir: /code/model
     volumes:
       - ./model:/code/model
+    command: openstudio run --workflow /code/model/workflow.json
 
 volumes:
   model:
