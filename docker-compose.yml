@@ -4,8 +4,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    working_dir: /code/model
     volumes:
-      - model:/code/model
+      - ./model:/code/model
 
 volumes:
   model:

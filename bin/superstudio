@@ -188,11 +188,9 @@ o = OptionParser.new do |option|
     options[:xml] = true
   end
 end
-# end.parse!
 
 subcommands = {
   'export' => OptionParser.new do |opts|
-    options[:export] = true
     opts.banner = 'Usage: superstudio export --templates [options] --occupancies [options] --name ./path/to/file.json'
     opts.on('--template [ARG]', '-t [ARG]', Array, 'Template(s) to include in the library export, defaults to all') do |template|
       path[:lib_template] = template
@@ -204,14 +202,28 @@ subcommands = {
     opts.on('--output [ARG]', '-o [ARG]', 'Output file to save the JSON to') do |pathname|
       path[:lib_output] = pathname
     end
+  end,
+
+  'workflow' => OptionParser.new do |opts|
+    opts.banner = 'Usage: superstudio workflow --new [options] --model /path/to/file.osm --weather ./path/to/file.epw'
+    options[:create_workflow] = false
+    opts.on('--new', '-n', 'Create a new OpenStudio Workflow JSON') do 
+      options[:create_workflow] = true
+    end 
+    opts.on('--model [ARG]', '-m [ARG]', Array, 'OSM file to include in the workflow') do |model_file|
+      path[:model_path] = model_file
+    end
+    opts.on('--weather [ARG]', '-w [ARG]', Array, 'EPW file to include in the workflow') do |weather_file|
+      path[:weather_path] = weather_file
+    end
   end
 }
-
 # Check to see if there's a subcommand:
 o.order!
 command = ARGV.shift
 
-if subcommands[command]
+if subcommands.key?(command)
+  options[command.to_sym] = true
   subcommands[command].order! unless command.nil?
 end
 
@@ -248,6 +260,7 @@ elsif options[:export]
   path[:lib_template] = 'all' unless path.key?(:lib_template)
   path[:lib_types] = 'all' unless path.key?(:lib_types)
   path[:lib_output] = './library.json' unless path.key?(:lib_output)
+
   begin
     modeler.export
     puts Rainbow("+ #{path[:lib_output]}").green
@@ -255,6 +268,32 @@ elsif options[:export]
     puts Rainbow("Failed to create file #{path[:lib_output]}").red
     puts Rainbow(exception.to_s).red
   end
+  exit true
+
+elsif options[:workflow]
+  puts '⚙️  Creating a Workflow File ⚙️'
+  begin
+    model_path = File.expand_path(path[:model_path][0])
+    weather_path = File.expand_path(path[:weather_path][0])
+    create_path = File.join(File.expand_path('./'), 'workflow.json')
+    timestamp = Time.now.strftime("%Y%m%dT%H%M%SZ").to_s
+    workflow = {
+      "created_at":timestamp,
+      "seed_file":model_path.to_s,
+      "steps":[],
+      "updated_at":timestamp,
+      "weather_file":weather_path.to_s
+    }
+
+    File.open(create_path, "w") do |f|
+      f.write(JSON.pretty_generate(workflow))
+    end
+    puts Rainbow("Successfully created workflow.json").green
+  rescue StandardError => exception
+    puts Rainbow("Failed to create workflow").red
+    puts Rainbow(exception.to_s).red
+  end
+
   exit true
 else
   puts 'Please choose to create a new model or load an existing OSM'

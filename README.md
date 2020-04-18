@@ -49,6 +49,19 @@ rake install
 rake test_create
 ```
 
+## Creating a Basic Workflow File
+OpenStudio workflows provide a convenient way to bootstrap measure runs for your models. Create a basic workflow with a seed file and weather file with:
+```bash
+superstudio workflow --new --model /path/to/model.osm --weather /path/to/weather.epw
+
+# Create a workflow.json in the current directory:
+
+🏢💡 SuperStudio 🔌🏢
+
+⚙️  Creating a Workflow File ⚙️
+Successfully created workflow.json
+```
+
 ## Exporting a FloorSpaceJS Library
 The `export` subcommand can be used to create a JSON file that FloorSpaceJS uses to add space types and construction sets to the user interface that can be scripted with measures. You can filter the complete list of OpenStudio-Standards space types by template and building type; the resulting JSON will plug in randomly generated colors for rendering the space types in the editor.
 
@@ -75,3 +88,17 @@ Will call the method `bootstrapCentralHwChwVavBasic` using Ruby's `__send__`
 Run the pre-commit scripts on all files outside of a commit with a `pre-commit run --all-files`
 
 To run the linter, simply run `rubocop` in the project root.
+
+# Docker and Docker-Compose
+Docker provides a great way to produce portable models that will run the same on your coworker's machine. Docker-Compose enhances this workflow by making it easy to map volumes and tie together different services. The provided `Dockerfile` creates an OpenStudio image with the `superstudio` CLI built right in and basic dependencies like OpenStudio-Standards installed by default. The Compose file will map a local directory (`./model`) to the container so you can drop OSM files, weather files, and measures right in. 
+
+```bash
+# Run the container and access it through a shell:
+docker-compose run model /bin/bash
+
+# Run a OS workflow with the OpenStudio-CLI:
+docker-compose run model openstudio run --workflow /code/model/workflow.osm
+
+# Rebuild the container if you made changes to the Dockerfile:
+docker-compose build model
+```
