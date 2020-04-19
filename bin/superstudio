@@ -2,6 +2,7 @@
 
 require 'optparse'
 require 'json'
+require 'yaml'
 require 'rainbow'
 
 require 'superstudio'
@@ -210,11 +211,21 @@ subcommands = {
     opts.on('--new', '-n', 'Create a new OpenStudio Workflow JSON') do 
       options[:create_workflow] = true
     end 
-    opts.on('--model [ARG]', '-m [ARG]', Array, 'OSM file to include in the workflow') do |model_file|
+    opts.on('--model [ARG]', '-m [ARG]', 'OSM file to include in the workflow') do |model_file|
       path[:model_path] = model_file
     end
-    opts.on('--weather [ARG]', '-w [ARG]', Array, 'EPW file to include in the workflow') do |weather_file|
+    opts.on('--weather [ARG]', '-w [ARG]', 'EPW file to include in the workflow') do |weather_file|
       path[:weather_path] = weather_file
+    end
+  end,
+
+  'run' => OptionParser.new do |opts|
+    opts.banner = 'Usage: superstudio run --workflow /path/to/workflow.json --output /path/to/output.yml'
+    opts.on('--workflow [ARG]', '-w [ARG]','An OpenStudio Workflow JSON file') do |workflow_file|
+      path[:workflow_path] = workflow_file
+    end
+    opts.on('--output [ARG]', '-o [ARG]','A YML file describing the variables and format to extract from the run results') do |output_file|
+      path[:output_path] = output_file
     end
   end
 }
@@ -273,8 +284,8 @@ elsif options[:export]
 elsif options[:workflow]
   puts '⚙️  Creating a Workflow File ⚙️'
   begin
-    model_path = File.expand_path(path[:model_path][0])
-    weather_path = File.expand_path(path[:weather_path][0])
+    model_path = File.expand_path(path[:model_path])
+    weather_path = File.expand_path(path[:weather_path])
     create_path = File.join(File.expand_path('./'), 'workflow.json')
     timestamp = Time.now.strftime("%Y%m%dT%H%M%SZ").to_s
     workflow = {
@@ -294,6 +305,13 @@ elsif options[:workflow]
     puts Rainbow(exception.to_s).red
   end
 
+  exit true
+elsif options[:run]
+  puts '🛤️  Running simulation 🛤️'
+  output_path = File.expand_path(path[:output_path])
+  raw_yml = File.open(output_path, 'r')
+  report_config = YAML.load(raw_yml)
+  puts report_config
   exit true
 else
   puts 'Please choose to create a new model or load an existing OSM'

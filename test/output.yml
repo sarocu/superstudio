@@ -1,0 +1,17 @@
+reports:
+  electric_meter:
+    table: meter
+    variables:
+      - joules
+      - datetime
+    output:
+      type: csv
+      name: electric
+  gas_meter:
+    table: meter
+    variables:
+      - btus
+      - datetime
+    output:
+      type: csv
+      name: naturalgas
