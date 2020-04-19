@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
     'lib/superplus/standard.rb',
     'lib/superplus/superplus.rb',
     'lib/superplus/library.rb',
+    'lib/superplus/simulation.rb',
     'lib/templates/basics.rb',
     'lib/templates/templates.rb',
     'lib/templates/basics.rb',

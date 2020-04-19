@@ -1,5 +1,6 @@
 require_relative 'standard'
 require_relative 'library'
+require_relative 'simulation'
 require_relative '../templates/templates'
 require_relative '../templates/basics'
 require 'openstudio'
